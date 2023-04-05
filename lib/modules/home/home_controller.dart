@@ -1,11 +1,10 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:mini_market_app/apis/products_api.dart';
+import 'package:mini_market_app/common/storage/realm.dart';
 import 'package:mini_market_app/models/product_model.dart';
 import 'package:mini_market_app/models/realm/cart.dart';
-import 'package:realm/realm.dart';
 
 class HomeController extends GetxController {
   ProductApi productApi = ProductApi();
@@ -27,7 +26,7 @@ class HomeController extends GetxController {
     isLoading = true;
     update();
 
-    var realm = Realm(Configuration.local([Cart.schema]));
+    var realm = RealmInstance.open();
     var response = await productApi.getProducts();
     if (response != null) {
       response['products'].forEach((data) {
@@ -68,7 +67,7 @@ class HomeController extends GetxController {
   }
 
   void addToCart(ProductModel product) {
-    var realm = Realm(Configuration.local([Cart.schema]));
+    var realm = RealmInstance.open();
     realm.write(() {
       realm.add<Cart>(Cart(
         product.id,
@@ -91,7 +90,7 @@ class HomeController extends GetxController {
   }
 
   void removeFromCart(ProductModel product) {
-    var realm = Realm(Configuration.local([Cart.schema]));
+    var realm = RealmInstance.open();
     var item = realm.find<Cart>(product.id);
     if (item != null) {
       realm.write(() => realm.delete(item));

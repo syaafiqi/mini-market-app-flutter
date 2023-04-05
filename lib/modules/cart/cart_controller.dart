@@ -1,8 +1,8 @@
 import 'package:collection/collection.dart';
 import 'package:get/get.dart';
+import 'package:mini_market_app/common/storage/realm.dart';
 import 'package:mini_market_app/models/cart_model.dart';
 import 'package:mini_market_app/models/realm/cart.dart';
-import 'package:realm/realm.dart';
 
 class CartController extends GetxController {
   List<CartModel> products = [];
@@ -15,7 +15,7 @@ class CartController extends GetxController {
   }
 
   void fetchProducts() async {
-    var realm = Realm(Configuration.local([Cart.schema]));
+    var realm = RealmInstance.open();
     products = realm
         .all<Cart>()
         .map((e) => CartModel(
@@ -37,7 +37,7 @@ class CartController extends GetxController {
   }
 
   void updateQty(int id, int qty) {
-    var realm = Realm(Configuration.local([Cart.schema]));
+    var realm = RealmInstance.open();
     var item = realm.find<Cart>(id);
     if (item != null) {
       realm.write(() {
@@ -53,7 +53,7 @@ class CartController extends GetxController {
   }
 
   void removeFromCart(int id) {
-    var realm = Realm(Configuration.local([Cart.schema]));
+    var realm = RealmInstance.open();
     var item = realm.find<Cart>(id);
     if (item != null) {
       realm.write(() {
